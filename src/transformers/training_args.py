@@ -2484,7 +2484,12 @@ class TrainingArguments:
         """
         Serializes this instance to a JSON string.
         """
-        return json.dumps(self.to_dict(), indent=2)
+        def default(obj):
+            if isinstance(obj, Path):
+                return str(obj)
+            raise TypeError(f'Object of type {obj.__class__.__name__} is not JSON serializable')
+        
+        return json.dumps(self.to_dict(), indent=2, default=default)
 
     def to_sanitized_dict(self) -> Dict[str, Any]:
         """
